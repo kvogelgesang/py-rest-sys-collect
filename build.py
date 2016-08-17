@@ -145,7 +145,7 @@ def initialize(project):
                          'Development Status :: 2',
                          'Environment :: Console',
                          'Intended Audience :: Systems Administration',
-                         'License :: OSI Approved :: Zetcom AG',
+                         'License :: OSI Approved :: GPL',
                          'Topic :: Software Development :: REST SYSTEM COLLECTOR'])
 
     project.set_property('distutils_commands', ['bdist'])
