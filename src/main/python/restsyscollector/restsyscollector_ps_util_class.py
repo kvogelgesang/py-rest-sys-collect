@@ -6,7 +6,7 @@ import psutil
 sys.path.append("../python")
 sys.path.append("src/main/python")
 
-class RestSysCollectorPsutils():
+class RestSysCollectorPsUtil():
 
     def getCpuTimes(self, percent=False, interval=0, percpu=False):
         return  psutil.cpu_times_percent()
