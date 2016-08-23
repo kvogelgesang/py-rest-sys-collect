@@ -14,7 +14,7 @@ import os, sys
 from subprocess import Popen, TimeoutExpired, STDOUT, CalledProcessError, check_output, PIPE
 
 
-ria_info_main_rel_version = "1"
+main_rel_version = "1"
 name = "restsyscollector"
 summary = "REST SYSTEM COLLECTOR"
 description = "Rest System Collector for collection and offer system metrics"
@@ -26,10 +26,10 @@ license = "GPL"
 def getversion():
     try:
         bugfix_version = os.environ['BUILD_NUMBER']
-        info_cli_version = ria_info_main_rel_version + ".0." + str(bugfix_version)
+        release_version = main_rel_version + ".0." + str(bugfix_version)
     except:
-        info_cli_version = ria_info_main_rel_version + ".0.0"
-    return info_cli_version
+        release_version = main_rel_version + ".0.0"
+    return release_version
 
 
 @task
@@ -163,6 +163,7 @@ def initialize(project):
                          'Programming Language :: Python :: 3',
                          'Programming Language :: Python :: 3.3',
                          'Programming Language :: Python :: 3.4',
+                         'Programming Language :: Python :: 3.5',
                          'Development Status :: 2',
                          'Environment :: Console',
                          'Intended Audience :: Systems Administration',

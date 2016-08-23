@@ -19,14 +19,14 @@ class install(_install):
         self.post_install_script()
 
 
-INFO_CLI_MAIN_REL_VERSION = "1"
+MAIN_REL_VERSION = "1"
 def getversion():
     try:
         bugfix_version = os.environ['BUILD_NUMBER']
-        info_cli_version = INFO_CLI_MAIN_REL_VERSION + ".0." + str(bugfix_version)
+        release_version = MAIN_REL_VERSION + ".0." + str(bugfix_version)
     except:
-        info_cli_version = INFO_CLI_MAIN_REL_VERSION + ".0.0"
-    return info_cli_version
+        release_version = MAIN_REL_VERSION + ".0.0"
+    return release_version
 
 
 if __name__ == '__main__':
@@ -58,6 +58,7 @@ if __name__ == '__main__':
             'Programming Language :: Python :: 3',
             'Programming Language :: Python :: 3.3',
             'Programming Language :: Python :: 3.4',
+            'Programming Language :: Python :: 3.5',
             'Development Status :: 2',
             'Environment :: Console',
             'Intended Audience :: Systems Administration',
