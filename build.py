@@ -11,7 +11,7 @@
 
 from pybuilder.core import Author, init, use_plugin, task
 import os, sys
-from subprocess import Popen, PIPE, STDOUT, call, check_output
+from subprocess import Popen, TimeoutExpired, STDOUT, CalledProcessError, check_output, PIPE
 
 
 ria_info_main_rel_version = "1"
@@ -34,6 +34,7 @@ def getversion():
 
 @task
 def upload_to_pypi_server():
+    timeout=10
     pypi_server = "testserver01"
     twine = "twine"
     artifact = "target/dist/" + name + "-" + getversion() + "/dist/" + name + "-" + getversion()
@@ -57,28 +58,48 @@ def upload_to_pypi_server():
         if not os.path.isfile(egg_artifact):
             print("[WARN]  Cannot find " + egg_artifact  + " to upload")
         else:
+            egg_artifact = artifact + "-py" + python_short_version + ".egg"
+            print("[INFO]  Start upload " + egg_artifact + " with twine to ->  " + pypi_server)
+            twine_command = twine + " upload -r " + pypi_server + " " + egg_artifact
+            print("[INFO]  Start -> " + twine_command)
             try:
-                egg_artifact = artifact + "-py" + python_short_version + ".egg"
-                print("[INFO]  Start upload " + egg_artifact + " with twine to ->  " + pypi_server)
-                twine_command = twine + " upload -r " + pypi_server + " " + egg_artifact
-                print("[INFO]  Start -> " + twine_command)
-                result = check_output(twine_command, stderr=STDOUT, shell=True)
-                print(str(result))
+                proc = Popen(twine_command, shell=True, stdout=PIPE, stderr=STDOUT)
+                out, err = proc.communicate(timeout=timeout)
+            except TimeoutExpired:
+                proc.kill()
+                print("[ERROR]  Cannot upload " + egg_artifact + " to pypi server " + pypi_server + ". Timeout after "
+                      + str(timeout) + " seconds ")
+                sys.exit(1)
             except Exception as e:
                 print("[ERROR]  Cannot upload " + egg_artifact + " to pypi server " + pypi_server + "\n" + str(e))
                 sys.exit(1)
+            print(str(out.decode("utf-8")))
+            if "HTTPError:" in out.decode("utf-8"):
+                print("[ERROR]  Cannot upload " + egg_artifact + " to pypi server " + pypi_server + "\n")
+                sys.exit(1)
+
         if not os.path.isfile(tar_artifact):
             print("[WARN]  Cannot find " + tar_artifact + ".to upload")
         else:
+            print("[INFO]  Start upload " + tar_artifact + " with twine to ->  " + pypi_server)
+            twine_command = twine + " upload -r " + pypi_server + " " + tar_artifact
+            print("[INFO]  Start -> " + twine_command)
             try:
-                print("[INFO]  Start upload " + tar_artifact + " with twine to ->  " + pypi_server)
-                twine_command = twine + " upload -r " + pypi_server + " " + tar_artifact
-                print("[INFO]  Start -> " + twine_command)
-                result = check_output(twine_command, stderr=STDOUT, shell=True)
-                print(str(result))
+                proc = Popen(twine_command, shell=True, stdout=PIPE, stderr=STDOUT)
+                out, err = proc.communicate(timeout=timeout)
+            except TimeoutExpired:
+                proc.kill()
+                print("[ERROR]  Cannot upload " + tar_artifact + " to pypi server " + pypi_server + ". Timeout after "
+                      + str(timeout) + " seconds ")
+                sys.exit(1)
             except Exception as e:
                 print("[ERROR]  Cannot upload " + tar_artifact + " to pypi server " + pypi_server + "\n" + str(e))
                 sys.exit(1)
+            print(str(out.decode("utf-8")))
+            if "HTTPError:" in out.decode("utf-8"):
+                print("[ERROR]  Cannot upload " + tar_artifact + " to pypi server " + pypi_server + "\n")
+                sys.exit(1)
+
     except Exception as e:
         print("[ERROR]  Cannot find/execute twine -> " + twine + "\n" + str(e) + "\nPerhaps ~/.pypirc not exists?")
         sys.exit(1)

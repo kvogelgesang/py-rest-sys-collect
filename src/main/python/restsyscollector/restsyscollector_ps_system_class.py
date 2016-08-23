@@ -34,6 +34,9 @@ class RestSysCollectorPsSystem():
             data.append(line)
         return data
 
+    def getCpuList(self):
+        return self.getFileDataAsList("/proc/cpuinfo")
+
     def getFileDataAsList(self, fullfilename):
         try:
             f = self.openFileHandler(fullfilename)
@@ -67,8 +70,6 @@ class RestSysCollectorPsSystem():
                 cpu_list.append(data_dict)
                 data_dict = {}
         return cpu_list
-
-
 
 
 
